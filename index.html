@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8>
+    <title>My first three.js app</title>
+    <style>
+   
+   canvas {
+    display: block; /* fix necessary to remove space at bottom of canvas */
+}
+    </style>
+</head>
+
+<body>
+
+
+     <cdiv id="container"></div>
+    <script src="three.js-master\build\three.js"></script>
+    <script>
+var scene, ship, camera, renderer;
+var element = document.getElementById("container");
+var group = new THREE.Group();
+const xSpeed = 0.005;
+const ySpeed = 0.005;
+
+
+init();
+animate();
+
+
+// Setup Function
+function init() {
+
+  // Setting up Scene, Renderer, Camera
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(100, 1, 1, 5000);
+  camera.position.z = 200;
+  renderer = new THREE.WebGLRenderer({antialias: true});
+  renderer.setSize(1000, 1000);
+  element.appendChild(renderer.domElement);
+
+  var light = new THREE.AmbientLight( 0x404040, 5 ); // soft white light
+scene.add( light );
+}
+
+
+var greyPhongMat = new THREE.MeshNormalMaterial();
+
+
+for (var i=0; i<1000; i++) {
+    var iso_size= Math.random()*30;
+    var iso_geo = new THREE.IcosahedronGeometry(iso_size)
+    iso = new THREE.Mesh(iso_geo, greyPhongMat);
+    iso.position.x = Math.random() * 2000 - 500;
+    iso.position.y = Math.random() * 2000 - 500;
+    iso.position.z = Math.random() * -10000;
+    group.add(iso)
+    scene.add(group)
+  }  
+
+  for (var i=0; i<100; i++) {
+    var dod_size= Math.random()*150;
+    var dodgeo = new THREE.DodecahedronGeometry(dod_size);
+    dod = new THREE.Mesh(dodgeo, greyPhongMat);
+    dod.position.x = Math.random() * 2000 - 500;
+    dod.position.y = Math.random() * 2000 - 500;
+    dod.position.z = Math.random() * -10000;
+    group.add(dod)
+    scene.add(group)
+  }  
+
+
+
+
+var geometry = new THREE.BoxGeometry( 10, 10, 10 );
+var material = new THREE.MeshBasicMaterial( {color: 'white'} );
+var ship = new THREE.Mesh( geometry, material );
+     
+      scene.add(ship);
+
+     
+      ship.position.z =150;
+      ship.position.x= 0;
+      ship.position.y=0;
+
+   
+
+// Animation Setup Function
+function render() {
+
+  var timer = Date.now() * 0.0001;
+  for ( var i=0; i<group.children.length; i++ ) {
+    var object = group.children[i];
+    object.rotation.x = timer * 8;
+    object.rotation.y = timer * 7.5; 
+    
+  
+    if (object.position.z>200){
+      object.position.z = -10000
+     
+    }
+    else{
+      
+    object.position.z += 5;
+  
+    }
+  }
+
+document.addEventListener("keydown", onDocumentKeyDown, false);
+function onDocumentKeyDown(event) {
+    var keyCode = event.which;
+    if (keyCode == 87) {
+        ship.position.y += ySpeed;
+    } else if (keyCode == 83) {
+        ship.position.y -= ySpeed;
+    } else if (keyCode == 65) {
+        ship.position.x -= xSpeed;
+    } else if (keyCode == 68) {
+        ship.position.x += xSpeed;
+    } else if (keyCode == 32) {
+        ship.position.set(0, 0, 0);
+    }
+};
+
+  renderer.render(scene, camera);
+
+}
+
+
+
+// Animate Function
+function animate() {
+  requestAnimationFrame(animate);
+
+  render(window.innerHeight, window.innerWidth);
+
+  }
+
+
+
+    </script>
+</body>
+
+</html> 
